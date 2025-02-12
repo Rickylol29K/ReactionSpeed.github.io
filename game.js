@@ -42,6 +42,7 @@ function createGrid() {
         tile.classList.add("tile");
         tile.dataset.index = i;
         tile.addEventListener("click", handleTileClick);
+        tile.addEventListener("touchstart", handleTileClick, { passive: true });
         grid.appendChild(tile);
     }
 }
@@ -70,6 +71,7 @@ function activateRandomTile() {
 
 function handleTileClick(event) {
     if (!gameActive) return;
+    event.preventDefault(); // Prevent double events (for touch)
 
     let clickedTile = event.target;
     if (clickedTile === activeTile) {
