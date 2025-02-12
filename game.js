@@ -3,7 +3,8 @@ let reactionTimes = [];
 let totalClicks = 0, correctClicks = 0;
 let gameActive = false;
 let timer;
-let streak = 0, bestStreak = localStorage.getItem("bestStreak") || 0;
+let streak = 0;
+let bestStreak = localStorage.getItem("bestStreak") || 0;
 
 // Load leaderboard from localStorage
 let bestFastestTime = parseFloat(localStorage.getItem("bestFastestTime")) || null;
@@ -14,12 +15,10 @@ updateLeaderboardDisplay();
 const clickSound = new Audio('https://www.fesliyanstudios.com/play-mp3/387');
 const failSound = new Audio('https://www.fesliyanstudios.com/play-mp3/435');
 
-// Start game
 function startGame() {
     gridSize = parseInt(document.getElementById("gridSize").value);
     maxTime = parseInt(document.getElementById("maxTime").value);
-
-    document.body.style.backgroundColor = "#e3e3e3";
+    
     document.getElementById("setup").style.display = "none";
     document.getElementById("game-container").style.display = "block";
 
@@ -33,7 +32,6 @@ function startGame() {
     }, 3000);
 }
 
-// Create grid
 function createGrid() {
     grid = document.getElementById("grid");
     grid.innerHTML = "";
@@ -48,7 +46,6 @@ function createGrid() {
     }
 }
 
-// Activate tile
 function activateRandomTile() {
     if (!gameActive) return;
 
@@ -71,7 +68,6 @@ function activateRandomTile() {
     activeTile.dataset.startTime = startTime;
 }
 
-// Handle clicks
 function handleTileClick(event) {
     if (!gameActive) return;
 
@@ -89,33 +85,28 @@ function handleTileClick(event) {
     }
 }
 
-// Show stats
+function endGame() {
+    gameActive = false;
+    showStats();
+}
+
 function showStats() {
+    document.getElementById("game-container").style.display = "none";
+    document.getElementById("stats").style.display = "block";
     document.getElementById("streak").innerText = `Longest Streak: ${streak}`;
+    
     localStorage.setItem("bestStreak", Math.max(streak, bestStreak));
     updateLeaderboardDisplay();
 }
 
-// Reset game
 function resetGame() {
-    // Hide the stats screen
     document.getElementById("stats").style.display = "none";
-
-    // Show the setup screen
     document.getElementById("setup").style.display = "block";
-
-    // Reset background color
-    document.body.style.backgroundColor = "#f4f4f4";
-
-    // Clear previous game data
-    reactionTimes = [];
-    totalClicks = 0;
-    correctClicks = 0;
     gameActive = false;
-
-    // Clear the grid (to ensure fresh tiles)
-    if (grid) {
-        grid.innerHTML = "";
-    }
 }
 
+function updateLeaderboardDisplay() {
+    document.getElementById("best-fastest-time").innerText = `Fastest Time: ${bestFastestTime || "--"} sec`;
+    document.getElementById("best-average-time").innerText = `Best Average Time: ${bestAverageTime || "--"} sec`;
+    document.getElementById("best-streak").innerText = `Best Streak: ${bestStreak || "--"}`;
+}
