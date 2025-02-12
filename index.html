@@ -16,8 +16,16 @@
             animation: fadeIn 1s ease-in-out;
         }
 
-        #setup, #stats {
+        #setup, #stats, #leaderboard {
             animation: fadeIn 1s ease-in-out;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         #game-container {
@@ -35,7 +43,7 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease-in-out;
         }
 
@@ -46,6 +54,7 @@
             border: 2px solid black;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s ease;
+            border-radius: 8px;
         }
 
         .tile:hover {
@@ -71,17 +80,6 @@
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        #leaderboard {
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         @keyframes fadeIn {
@@ -118,6 +116,7 @@
         <p id="fastest-time"></p>
         <p id="average-time"></p>
         <p id="accuracy"></p>
+        <p id="streak">Longest Streak: --</p>
         <button onclick="resetGame()">Play Again</button>
     </div>
 
@@ -125,6 +124,7 @@
         <h2>Leaderboard (Personal Bests)</h2>
         <p id="best-fastest-time">Fastest Time: -- sec</p>
         <p id="best-average-time">Best Average Time: -- sec</p>
+        <p id="best-streak">Best Streak: --</p>
     </div>
 
     <script src="game.js"></script>

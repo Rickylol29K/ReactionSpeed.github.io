@@ -3,12 +3,18 @@ let reactionTimes = [];
 let totalClicks = 0, correctClicks = 0;
 let gameActive = false;
 let timer;
+let streak = 0, bestStreak = localStorage.getItem("bestStreak") || 0;
 
 // Load leaderboard from localStorage
 let bestFastestTime = parseFloat(localStorage.getItem("bestFastestTime")) || null;
 let bestAverageTime = parseFloat(localStorage.getItem("bestAverageTime")) || null;
 updateLeaderboardDisplay();
 
+// Sounds
+const clickSound = new Audio('https://www.fesliyanstudios.com/play-mp3/387');
+const failSound = new Audio('https://www.fesliyanstudios.com/play-mp3/435');
+
+// Start game
 function startGame() {
     gridSize = parseInt(document.getElementById("gridSize").value);
     maxTime = parseInt(document.getElementById("maxTime").value);
@@ -27,6 +33,7 @@ function startGame() {
     }, 3000);
 }
 
+// Create grid
 function createGrid() {
     grid = document.getElementById("grid");
     grid.innerHTML = "";
@@ -41,6 +48,7 @@ function createGrid() {
     }
 }
 
+// Activate tile
 function activateRandomTile() {
     if (!gameActive) return;
 
@@ -56,61 +64,58 @@ function activateRandomTile() {
 
     timer = setTimeout(() => {
         gameActive = false;
+        failSound.play();
         showStats();
     }, maxTime * 1000);
 
     activeTile.dataset.startTime = startTime;
 }
 
+// Handle clicks
 function handleTileClick(event) {
     if (!gameActive) return;
 
     let clickedTile = event.target;
     if (clickedTile === activeTile) {
         clearTimeout(timer);
-
-        clickedTile.style.transform = "scale(0.9)";
-        setTimeout(() => clickedTile.style.transform = "scale(1)", 150);
+        clickSound.play();
 
         let reactionTime = (Date.now() - activeTile.dataset.startTime) / 1000;
         reactionTimes.push(reactionTime);
         correctClicks++;
+        streak++;
 
         activateRandomTile();
     }
 }
 
-function endGame() {
-    gameActive = false;
-    showStats();
+// Show stats
+function showStats() {
+    document.getElementById("streak").innerText = `Longest Streak: ${streak}`;
+    localStorage.setItem("bestStreak", Math.max(streak, bestStreak));
+    updateLeaderboardDisplay();
 }
 
-function showStats() {
+// Reset game
+function resetGame() {
+    // Hide the stats screen
+    document.getElementById("stats").style.display = "none";
+
+    // Show the setup screen
+    document.getElementById("setup").style.display = "block";
+
+    // Reset background color
     document.body.style.backgroundColor = "#f4f4f4";
-    document.getElementById("game-container").style.display = "none";
-    document.getElementById("stats").style.display = "block";
 
-    if (reactionTimes.length > 0) {
-        let fastest = Math.min(...reactionTimes).toFixed(2);
-        let avg = (reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length).toFixed(2);
+    // Clear previous game data
+    reactionTimes = [];
+    totalClicks = 0;
+    correctClicks = 0;
+    gameActive = false;
 
-        document.getElementById("fastest-time").innerText = `Fastest Time: ${fastest} sec`;
-        document.getElementById("average-time").innerText = `Average Time: ${avg} sec`;
-
-        if (!bestFastestTime || fastest < bestFastestTime) {
-            localStorage.setItem("bestFastestTime", fastest);
-            bestFastestTime = fastest;
-        }
-        if (!bestAverageTime || avg < bestAverageTime) {
-            localStorage.setItem("bestAverageTime", avg);
-            bestAverageTime = avg;
-        }
-
-        updateLeaderboardDisplay();
+    // Clear the grid (to ensure fresh tiles)
+    if (grid) {
+        grid.innerHTML = "";
     }
 }
 
-function updateLeaderboardDisplay() {
-    document.getElementById("best-fastest-time").innerText = `Fastest Time: ${bestFastestTime || "--"} sec`;
-    document.getElementById("best-average-time").innerText = `Best Average Time: ${bestAverageTime || "--"} sec`;
-}
